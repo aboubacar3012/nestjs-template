@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Article } from '@prisma/client';
 
-export class ArticleEntity implements Article {
+export class ArticleEntity {
   @ApiProperty()
   id: string;
 
@@ -22,7 +21,4 @@ export class ArticleEntity implements Article {
 
   @ApiProperty()
   updatedAt: Date;
-
-  @ApiProperty()
-  authorId: string;
 }

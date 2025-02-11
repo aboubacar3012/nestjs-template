@@ -97,3 +97,32 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+
+
+
+
+
+
+<!-- build -->
+docker build --platform linux/amd64 -t nom-de-votre-image .
+
+
+<!-- run -->
+docker run -d -p 3000:3000 nom-de-votre-image
+
+<!-- verifications: optionnel -->
+aws ecr describe-repositories --region eu-west-3
+
+<!-- optionnel -->
+aws ecr describe-repositories --repository-names elyamaje/median --region eu-west-3 --query 'repositories[0].repositoryUri' --output text
+
+<!-- taguer l'image -->
+docker tag median-nestjs-postgres-prisma:latest 211125324328.dkr.ecr.eu-west-3.amazonaws.com/elyamaje/median:latest
+
+<!-- authentificer docker aupres d'ecr -->
+aws ecr get-login-password --region eu-west-3 | docker login --username AWS --password-stdin 211125324328.dkr.ecr.eu-west-3.amazonaws.com/elyamaje/median
+
+
+<!-- pusher l'image -->
+docker push 211125324328.dkr.ecr.eu-west-3.amazonaws.com/elyamaje/median:latest
