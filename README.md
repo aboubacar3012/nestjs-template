@@ -126,3 +126,10 @@ aws ecr get-login-password --region eu-west-3 | docker login --username AWS --pa
 
 <!-- pusher l'image -->
 docker push 211125324328.dkr.ecr.eu-west-3.amazonaws.com/elyamaje/median:latest
+
+
+
+
+<!-- notes -->
+docker tag elyamaje/median:latest 211125324328.dkr.ecr.eu-west-3.amazonaws.com/elyamaje/median:latest
+docker push 211125324328.dkr.ecr.eu-west-3.amazonaws.com/elyamaje/median:latest
