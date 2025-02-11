@@ -31,7 +31,31 @@ async function main() {
     },
   });
 
-  console.log({ post1, post2 });
+  const post3 = await prisma.article.upsert({
+    where: { title: 'Prisma Migrate is now Generally Available' },
+    update: {},
+    create: {
+      title: 'Prisma Migrate is now Generally Available',
+      body: 'We are thrilled to announce that Prisma Migrate is now Generally Available!',
+      description:
+        'Prisma Migrate is a database schema migration tool that simplifies evolving the database schema...',
+      published: true,
+    },
+  });
+
+  const post4 = await prisma.article.upsert({
+    where: { title: 'Prisma Client 3.0 is now Generally Available' },
+    update: {},
+    create: {
+      title: 'Prisma Client 3.0 is now Generally Available',
+      body: 'We are excited to announce that Prisma Client 3.0 is now Generally Available!',
+      description:
+        'Prisma Client is an auto-generated and type-safe query builder that is tailored to your database schema...',
+      published: true,
+    },
+  });
+
+  console.log({ post1, post2, post3, post4 });
 }
 
 // execute the main function
