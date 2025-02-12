@@ -33,7 +33,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: eu-west-3
 
-    # Décrit les instances EC2 avec le tag project=median-nestjs
+    # Décrit les instances EC2 avec le tag project=median-nestjs et enregistre les identifiants des instances dans un fichier
     - name: Décrire les instances EC2 avec le tag project=project
       id: describe-instances
       run: |
