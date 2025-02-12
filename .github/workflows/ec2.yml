@@ -1,4 +1,4 @@
-name: EC2 IAM List Users
+name: EC2 Deployment Workflow
 
 on:
   push:
@@ -20,5 +20,12 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: eu-west-3
 
-    - name: Start EC2 instances with tag project=median
-      run: aws ec2 start-instances --filters "Name=tag:project,Values=median" --region eu-west-3 
+    - name: Describe EC2 instances with tag project=median
+      id: describe-instances
+      run: |
+        aws ec2 describe-instances --filters "Name=tag:project,Values=median" --region eu-west-3 --query "Reservations[*].Instances[*].InstanceId" --output text > instance_ids.txt
+
+    - name: Start EC2 instances
+      run: |
+        instance_ids=$(cat instance_ids.txt)
+        aws ec2 start-instances --instance-ids $instance_ids --region eu-west-3
