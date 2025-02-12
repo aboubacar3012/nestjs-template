@@ -20,5 +20,5 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: eu-west-3
 
-    - name: List IAM users
-      run: aws iam list-users
+    - name: Start EC2 instances with tag project=median
+      run: aws ec2 start-instances --filters "Name=tag:project,Values=median" --region eu-west-3 
