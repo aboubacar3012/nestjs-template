@@ -1,3 +1,14 @@
+# /**
+#  * Workflow de Déploiement EC2
+#  *
+#  * Ce workflow est déclenché par un push sur la branche `main`.
+#  * Il effectue les actions suivantes :
+#  * 1. Récupère le code du dépôt.
+#  * 2. Configure les identifiants AWS.
+#  * 3. Décrit les instances EC2 avec le tag `project=median-nestjs`.
+#  * 4. Vérifie l'état des instances EC2 et les démarre si elles sont arrêtées, ou les redémarre si elles sont en cours d'exécution.
+#  */
+
 name: Workflow de Déploiement EC2
 
 on:
@@ -6,14 +17,15 @@ on:
       - main
 
 jobs:
-  deploy:
+  list-users:
     runs-on: ubuntu-latest
 
     steps:
+    # Récupère le code du dépôt
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # Étape pour configurer les identifiants AWS
+    # Configure les identifiants AWS
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
@@ -21,47 +33,21 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: eu-west-3
 
-    # Étape pour décrire les instances EC2 avec le tag project=median
-    - name: Describe EC2 instances with tag project=median
+    # Décrit les instances EC2 avec le tag project=median-nestjs
+    - name: Décrire les instances EC2 avec le tag project=project
       id: describe-instances
       run: |
-        aws ec2 describe-instances --filters "Name=tag:project,Values=median" --region eu-west-3 --query "Reservations[*].Instances[*].InstanceId" --output text > instance_ids.txt
+        aws ec2 describe-instances --filters "Name=tag:project,Values=median-nestjs" --region eu-west-3 --query "Reservations[*].Instances[*].InstanceId" --output text > instance_ids.txt
 
-    # Étape pour vérifier si les instances EC2 sont déjà en cours d'exécution
-    - name: Check if EC2 instances are running
-      id: check-instances
-      run: |
-        instance_ids=$(cat instance_ids.txt)
-        aws ec2 describe-instances --instance-ids $instance_ids --region eu-west-3 --query "Reservations[*].Instances[*].State.Name" --output text > instance_states.txt
-        if grep -q "running" instance_states.txt; then
-          echo "Instances are already running" > instances_running.txt
-        else
-          echo "Instances are not running" > instances_running.txt
-        fi
-
-    # Étape pour démarrer les instances EC2 si elles ne sont pas déjà en cours d'exécution
-    - name: Start EC2 instances
-      if: steps.check-instances.outputs.instances_running != 'Instances are already running'
-      run: |
-        instance_ids=$(cat instance_ids.txt)
-        aws ec2 start-instances --instance-ids $instance_ids --region eu-west-3
-
-    # Étape pour attendre que les instances EC2 soient en cours d'exécution
-    - name: Wait for EC2 instances to be running
+    # Vérifie l'état des instances EC2 et les démarre si elles sont arrêtées, ou les redémarre si elles sont en cours d'exécution
+    - name: Vérifier et démarrer ou redémarrer les instances EC2
       run: |
         instance_ids=$(cat instance_ids.txt)
         for instance_id in $instance_ids; do
-          aws ec2 wait instance-running --instance-ids $instance_id --region eu-west-3
+          state=$(aws ec2 describe-instances --instance-ids $instance_id --region eu-west-3 --query "Reservations[*].Instances[*].State.Name" --output text)
+          if [ "$state" = "stopped" ]; then
+            aws ec2 start-instances --instance-ids $instance_id --region eu-west-3
+          elif [ "$state" = "running" ]; then
+            aws ec2 reboot-instances --instance-ids $instance_id --region eu-west-3
+          fi
         done
-
-    # Étape pour cloner le dépôt et construire l'image Docker
-    - name: Clone repository and build Docker image
-      run: |
-        git clone https://github.com/aboubacar3012/median.nestjs-postgresql-prisma.git
-        cd median.nestjs-postgresql-prisma/
-        docker build -t median.nestjs-postgresql-prisma .
-
-    # Étape pour exécuter le conteneur Docker
-    - name: Run Docker container
-      run: |
-        docker run -d -p 3000:3000 median.nestjs-postgresql-prisma
