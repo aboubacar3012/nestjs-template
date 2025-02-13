@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateArticleDto } from './dto/create-article.dto';
-import { UpdateArticleDto } from './dto/update-article.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { PaginationArticlesDto } from './dto/pagination-articles.dto';
+import { CreateArticleDto } from '@/articles/dto/create-article.dto';
+import { UpdateArticleDto } from '@/articles/dto/update-article.dto';
+import { PrismaService } from 'nestjs-prisma';
+import { PaginationArticlesDto } from '@/articles/dto/pagination-articles.dto';
 
 @Injectable()
 export class ArticlesService {
