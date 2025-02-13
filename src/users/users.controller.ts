@@ -8,13 +8,20 @@ import {
   Delete,
   Query,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from '@/users/users.service';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { UpdateUserDto } from '@/users/dto/update-user.dto';
-import { ApiCreatedResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { PaginationDto } from '@/articles/dto/pagination.dto';
 import { UserEntity } from '@/users/entities/user.entity';
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 
 @Controller('users')
 @ApiTags('Users')
@@ -29,6 +36,8 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiResponse({ type: UserEntity, isArray: true })
   async findAll(@Query() query: PaginationDto) {
     const response = await this.usersService.findAll(query);
@@ -39,6 +48,8 @@ export class UsersController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiResponse({ type: UserEntity })
   async findOne(@Param('id') id: string) {
     const user = await this.usersService.findOne(id);
@@ -50,6 +61,8 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiResponse({ type: UserEntity })
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const updatedUser = await this.usersService.update(id, updateUserDto);
@@ -61,6 +74,8 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiResponse({ type: UserEntity })
   async remove(@Param('id') id: string) {
     const deletedUser = await this.usersService.remove(id);
