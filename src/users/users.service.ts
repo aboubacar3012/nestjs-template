@@ -11,7 +11,12 @@ export const roundsOfHashing = 10;
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
+  /**
+   * Creates a new user with hashed password.
+   * @param {CreateUserDto} createUserDto - Data transfer object for creating a user.
+   * @returns {Promise<any>} The created user.
+   */
+  async create(createUserDto: CreateUserDto): Promise<any> {
     const hashedPassword = await bcrypt.hash(
       createUserDto.password,
       roundsOfHashing,
@@ -23,7 +28,12 @@ export class UsersService {
     });
   }
 
-  async findAll(query: PaginationDto) {
+  /**
+   * Finds all users with pagination.
+   * @param {PaginationDto} query - Pagination query parameters.
+   * @returns {Promise<any>} The paginated list of users.
+   */
+  async findAll(query: PaginationDto): Promise<any> {
     const { page = 1, limit = 10 } = query;
     const skip = (page - 1) * limit;
 
@@ -51,13 +61,24 @@ export class UsersService {
     return result;
   }
 
-  findOne(id: string) {
+  /**
+   * Finds a user by ID.
+   * @param {string} id - The ID of the user to find.
+   * @returns {Promise<any>} The found user.
+   */
+  findOne(id: string): Promise<any> {
     return this.prisma.user.findUnique({
       where: { id },
     });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
+  /**
+   * Updates a user by ID.
+   * @param {string} id - The ID of the user to update.
+   * @param {UpdateUserDto} updateUserDto - Data transfer object for updating a user.
+   * @returns {Promise<any>} The updated user.
+   */
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<any> {
     if (updateUserDto.password) {
       updateUserDto.password = await bcrypt.hash(
         updateUserDto.password,
@@ -71,7 +92,12 @@ export class UsersService {
     });
   }
 
-  remove(id: string) {
+  /**
+   * Removes a user by ID.
+   * @param {string} id - The ID of the user to remove.
+   * @returns {Promise<any>} The removed user.
+   */
+  remove(id: string): Promise<any> {
     return this.prisma.user.delete({
       where: { id },
     });

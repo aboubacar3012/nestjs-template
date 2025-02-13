@@ -9,9 +9,9 @@ import { PrismaClientExceptionFilter } from 'nestjs-prisma';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Middleware global
   // Utilisation de la classe ValidationPipe pour valider les données entrantes
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-
   // Utilisation de la classe ClassSerializerInterceptor pour transformer les objets en JSON
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
@@ -30,9 +30,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
+  // Gestion des exceptions Prisma
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
 
+  // Démarrage de l'application
   await app.listen(3000);
 }
+
+// Initialisation de l'application
 bootstrap();

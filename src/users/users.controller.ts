@@ -28,6 +28,11 @@ import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  /**
+   * Create a new user.
+   * @param createUserDto - Data transfer object for creating a user.
+   * @returns The created user entity.
+   */
   @Post()
   @ApiCreatedResponse({ type: UserEntity })
   async create(@Body() createUserDto: CreateUserDto) {
@@ -35,6 +40,11 @@ export class UsersController {
     return new UserEntity({ ...user, name: user.name });
   }
 
+  /**
+   * Retrieve all users with pagination.
+   * @param query - Pagination query parameters.
+   * @returns A list of user entities and pagination info.
+   */
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -47,6 +57,12 @@ export class UsersController {
     };
   }
 
+  /**
+   * Retrieve a user by ID.
+   * @param id - The ID of the user to retrieve.
+   * @returns The user entity.
+   * @throws NotFoundException if the user is not found.
+   */
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -60,6 +76,13 @@ export class UsersController {
     return new UserEntity(user);
   }
 
+  /**
+   * Update a user by ID.
+   * @param id - The ID of the user to update.
+   * @param updateUserDto - Data transfer object for updating a user.
+   * @returns The updated user entity.
+   * @throws NotFoundException if the user is not found.
+   */
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -73,6 +96,12 @@ export class UsersController {
     return new UserEntity(updatedUser);
   }
 
+  /**
+   * Delete a user by ID.
+   * @param id - The ID of the user to delete.
+   * @returns The deleted user entity.
+   * @throws NotFoundException if the user is not found.
+   */
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
