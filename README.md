@@ -146,3 +146,6 @@ docker push 211125324328.dkr.ecr.eu-west-3.amazonaws.com/elyamaje/median:latest
 
 # Notes a rajouter
 - Faire de la jsdoc pour les fonctions, dto, entities, services, controllers 
+- Uniformisation des reponses, comme sur elyamajebackend
+- Ajouter les tests unitaires et e2e
+- Faire une config de base de donnee pour se connecter en local
