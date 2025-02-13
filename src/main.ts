@@ -14,8 +14,8 @@ async function bootstrap() {
 
   // Configuration de Swagger pour générer la documentation de l'API
   const config = new DocumentBuilder()
-    .setTitle('Median')
-    .setDescription('The Median API description')
+    .setTitle('Elyamaje API')
+    .setDescription('API elyamaje play avec NestJS')
     .setVersion('0.1')
     .build();
   const document = SwaggerModule.createDocument(app, config);
