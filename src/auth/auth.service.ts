@@ -11,11 +11,24 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
+  /**
+   * AuthService constructor
+   * @param {PrismaService} prisma - The Prisma service
+   * @param {JwtService} jwtService - The JWT service
+   */
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
   ) {}
 
+  /**
+   * Login a user with email and password
+   * @param {string} email - The user's email
+   * @param {string} password - The user's password
+   * @returns {Promise<AuthEntity>} - The authentication entity containing the access token
+   * @throws {NotFoundException} - If no user is found for the given email
+   * @throws {UnauthorizedException} - If the password is invalid
+   */
   async login(email: string, password: string): Promise<AuthEntity> {
     // Step 1: Fetch a user with the given email
     const user = await this.prisma.user.findUnique({ where: { email: email } });

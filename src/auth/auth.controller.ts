@@ -9,6 +9,11 @@ import { LoginDto } from './dto/login.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  /**
+   * Handles user login.
+   * @param {LoginDto} loginDto - The login data transfer object containing email and password.
+   * @returns {Promise<AuthEntity>} The authentication entity containing user details and token.
+   */
   @Post('login')
   @ApiOkResponse({ type: AuthEntity })
   login(@Body() { email, password }: LoginDto) {
