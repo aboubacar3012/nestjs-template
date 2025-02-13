@@ -101,6 +101,15 @@ Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
 
 
+npx prisma migrate dev --name "add-user-model"
+
+npx prisma generate
+
+npx prisma db seed
+
+px prisma studio
+
+npx nest generate resource
 
 
 
@@ -133,3 +142,7 @@ docker push 211125324328.dkr.ecr.eu-west-3.amazonaws.com/elyamaje/median:latest
 <!-- notes -->
 docker tag elyamaje/median:latest 211125324328.dkr.ecr.eu-west-3.amazonaws.com/elyamaje/median:latest
 docker push 211125324328.dkr.ecr.eu-west-3.amazonaws.com/elyamaje/median:latest
+
+
+# Notes a rajouter
+- Faire de la jsdoc pour les fonctions, dto, entities, services, controllers 

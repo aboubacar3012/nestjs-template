@@ -4,6 +4,7 @@ import { AppService } from '@/app.service';
 // import { PrismaModule } from '@/prisma/prisma.module';
 import { ArticlesModule } from '@/articles/articles.module';
 import { PrismaModule, QueryInfo, loggingMiddleware } from 'nestjs-prisma';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { PrismaModule, QueryInfo, loggingMiddleware } from 'nestjs-prisma';
       },
     }),
     ArticlesModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

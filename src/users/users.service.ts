@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { CreateArticleDto } from '@/articles/dto/create-article.dto';
-import { UpdateArticleDto } from '@/articles/dto/update-article.dto';
+import { CreateUserDto } from '@/users/dto/create-user.dto';
+import { UpdateUserDto } from '@/users/dto/update-user.dto';
 import { PrismaService } from 'nestjs-prisma';
 import { PaginationDto } from '@/articles/dto/pagination.dto';
 
 @Injectable()
-export class ArticlesService {
+export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  create(createArticleDto: CreateArticleDto) {
-    return this.prisma.article.create({ data: createArticleDto });
+  create(createUserDto: CreateUserDto) {
+    return this.prisma.user.create({
+      data: createUserDto,
+    });
   }
 
   async findAll(query: PaginationDto) {
@@ -17,15 +19,14 @@ export class ArticlesService {
     const skip = (page - 1) * limit;
 
     const [items, totalItems] = await Promise.all([
-      this.prisma.article.findMany({
-        where: { published: true },
+      this.prisma.user.findMany({
         take: Number(limit),
         skip: Number(skip),
         orderBy: {
           createdAt: 'desc',
         },
       }),
-      this.prisma.article.count({ where: { published: true } }),
+      this.prisma.user.count(),
     ]);
 
     const result = {
@@ -41,27 +42,22 @@ export class ArticlesService {
     return result;
   }
 
-  findDrafts() {
-    return this.prisma.article.findMany({
-      where: { published: false },
-    });
-  }
-
   findOne(id: string) {
-    return this.prisma.article.findUnique({
+    return this.prisma.user.findUnique({
       where: { id },
-      include: { author: true },
     });
   }
 
-  update(id: string, updateArticleDto: UpdateArticleDto) {
-    return this.prisma.article.update({
+  update(id: string, updateUserDto: UpdateUserDto) {
+    return this.prisma.user.update({
       where: { id },
-      data: updateArticleDto,
+      data: updateUserDto,
     });
   }
 
   remove(id: string) {
-    return this.prisma.article.delete({ where: { id } });
+    return this.prisma.user.delete({
+      where: { id },
+    });
   }
 }

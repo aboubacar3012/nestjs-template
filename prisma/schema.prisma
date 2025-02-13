@@ -21,4 +21,21 @@ model Article {
   published   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  
+  authorId    String?
+
+  // 1:1 relation with User
+  author      User?     @relation(fields: [authorId], references: [id])
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 1:M relation with Article
+  articles Article[]
 }

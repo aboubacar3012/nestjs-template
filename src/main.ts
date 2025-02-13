@@ -1,9 +1,9 @@
 // src/main.ts
 
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from '@/app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { PrismaClientExceptionFilter } from 'nestjs-prisma';
 
 async function bootstrap() {
@@ -11,6 +11,9 @@ async function bootstrap() {
 
   // Utilisation de la classe ValidationPipe pour valider les données entrantes
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+
+  // Utilisation de la classe ClassSerializerInterceptor pour transformer les objets en JSON
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   // Configuration de Swagger pour générer la documentation de l'API
   const config = new DocumentBuilder()
