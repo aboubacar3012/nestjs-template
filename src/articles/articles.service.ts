@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { PaginationArticlesDto } from './dto/pagination-articles.dto';
 
 @Injectable()
 export class ArticlesService {
@@ -11,10 +12,33 @@ export class ArticlesService {
     return this.prisma.article.create({ data: createArticleDto });
   }
 
-  findAll() {
-    return this.prisma.article.findMany({
-      where: { published: true },
-    });
+  async findAll(query: PaginationArticlesDto) {
+    const { page = 1, limit = 10 } = query;
+    const skip = (page - 1) * limit;
+
+    const [items, totalItems] = await Promise.all([
+      this.prisma.article.findMany({
+        where: { published: true },
+        take: Number(limit),
+        skip: Number(skip),
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      this.prisma.article.count({ where: { published: true } }),
+    ]);
+
+    const result = {
+      items,
+      pagination: {
+        totalItems,
+        page,
+        limit,
+        totalPages: Math.ceil(totalItems / limit),
+      },
+    };
+
+    return result;
   }
 
   findDrafts() {
