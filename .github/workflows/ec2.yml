@@ -1,12 +1,10 @@
-# /**
-#  * Workflow de Déploiement EC2
-#  *
-#  * Ce workflow est déclenché par un push sur la branche `main`.
-#  * Il effectue les actions suivantes :
-#  * 1. Récupère le code du dépôt.
-#  * 2. Configure les identifiants AWS.
-#  * 3. Décrit les instances EC2 avec le tag `project=median-app`.
-#  * 4. Vérifie l'état des instances EC2 et les démarre si elles sont arrêtées, ou les arrête puis démarre si elles sont en cours d'exécution.
+#  Workflow de Déploiement EC2
+# Ce workflow est déclenché par un push sur la branche `main`.
+# Il effectue les actions suivantes :
+# 1. Récupère le code du dépôt.
+# 2. Configure les identifiants AWS.
+# 3. Décrit les instances EC2 avec le tag `project=median-app`.
+# 4. Vérifie l'état des instances EC2 et les démarre si elles sont arrêtées, ou les arrête puis démarre si elles sont en cours d'exécution.
 #  */
 
 # name: Workflow de Déploiement EC2
