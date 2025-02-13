@@ -27,6 +27,11 @@ export class CreateArticleDto {
   @ApiProperty()
   body: string;
 
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  authorId: string;
+
   @IsOptional()
   @IsBoolean()
   @ApiProperty({ required: false, default: false })

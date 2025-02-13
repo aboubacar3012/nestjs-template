@@ -1,22 +1,37 @@
 // src/main.ts
 
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { HttpAdapterHost, NestFactory, Reflector } from '@nestjs/core';
+import { AppModule } from '@/app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { PrismaClientExceptionFilter } from 'nestjs-prisma';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.useGlobalPipes(new ValidationPipe());
+  // Utilisation de la classe ValidationPipe pour valider les données entrantes
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
+  // Utilisation de la classe ClassSerializerInterceptor pour transformer les objets en JSON
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+
+  // Configuration de Swagger pour générer la documentation de l'API
   const config = new DocumentBuilder()
-    .setTitle('Median')
-    .setDescription('The Median API description')
+    .setTitle('Template API')
+    .setDescription('API template play avec NestJS')
+    .setContact('template', 'https://template.com', 'contact@template.com')
     .setVersion('0.1')
+    .addBearerAuth()
+    // .addApiKey({ type: 'apiKey', name: 'X-API-KEY', in: 'header' }) // Ajout d'un API Key
+    .addServer('http://localhost:3000')
+    .addServer('https://api.template.com')
+    .addTag('users', 'Gestion des utilisateurs')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
 
   await app.listen(3000);
 }
