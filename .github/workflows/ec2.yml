@@ -6,47 +6,47 @@
 # 3. Décrit les instances EC2 avec le tag `project=median-app`.
 # 4. Vérifie l'état des instances EC2 et les démarre si elles sont arrêtées, ou les arrête puis démarre si elles sont en cours d'exécution.
 
-# name: Workflow de Déploiement EC2
+name: Workflow de Déploiement EC2
 
-# on:
-#   push:
-#     branches:
-#       - main
+on:
+  push:
+    branches:
+      - staging
 
-# jobs:
-#   list-users:
-#     runs-on: ubuntu-latest
+jobs:
+  list-users:
+    runs-on: ubuntu-latest
 
-#     steps:
-#     # Récupère le code du dépôt
-#     - name: Checkout code
-#       uses: actions/checkout@v4
+    steps:
+    # Récupère le code du dépôt
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-#     # Configure les identifiants AWS
-#     - name: Configure AWS credentials
-#       uses: aws-actions/configure-aws-credentials@v4
-#       with:
-#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#         aws-region: eu-west-3
+    # Configure les identifiants AWS
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-3
 
-#     # Décrit les instances EC2 avec le tag project=median-app et enregistre les identifiants des instances dans un fichier
-#     - name: Décrire les instances EC2 avec le tag project=project
-#       id: describe-instances
-#       run: |
-#         aws ec2 describe-instances --filters "Name=tag:project,Values=median-app" --region eu-west-3 --query "Reservations[*].Instances[*].InstanceId" --output text > instance_ids.txt
+    # Décrit les instances EC2 avec le tag project=median-app et enregistre les identifiants des instances dans un fichier
+    - name: Décrire les instances EC2 avec le tag project=project
+      id: describe-instances
+      run: |
+        aws ec2 describe-instances --filters "Name=tag:project,Values=median-app" --region eu-west-3 --query "Reservations[*].Instances[*].InstanceId" --output text > instance_ids.txt
 
-#     # Vérifie l'état des instances EC2 et les démarre si elles sont arrêtées, ou les arrête puis démarre si elles sont en cours d'exécution
-#     - name: Vérifier et démarrer ou arrêter puis démarrer les instances EC2
-#       run: |
-#         instance_ids=$(cat instance_ids.txt)
-#         for instance_id in $instance_ids; do
-#           state=$(aws ec2 describe-instances --instance-ids $instance_id --region eu-west-3 --query "Reservations[*].Instances[*].State.Name" --output text)
-#           if [ "$state" = "stopped" ]; then
-#             aws ec2 start-instances --instance-ids $instance_id --region eu-west-3
-#           elif [ "$state" = "running" ]; then
-#             aws ec2 stop-instances --instance-ids $instance_id --region eu-west-3
-#             aws ec2 wait instance-stopped --instance-ids $instance_id --region eu-west-3
-#             aws ec2 start-instances --instance-ids $instance_id --region eu-west-3
-#           fi
-#         done
+    # Vérifie l'état des instances EC2 et les démarre si elles sont arrêtées, ou les arrête puis démarre si elles sont en cours d'exécution
+    - name: Vérifier et démarrer ou arrêter puis démarrer les instances EC2
+      run: |
+        instance_ids=$(cat instance_ids.txt)
+        for instance_id in $instance_ids; do
+          state=$(aws ec2 describe-instances --instance-ids $instance_id --region eu-west-3 --query "Reservations[*].Instances[*].State.Name" --output text)
+          if [ "$state" = "stopped" ]; then
+            aws ec2 start-instances --instance-ids $instance_id --region eu-west-3
+          elif [ "$state" = "running" ]; then
+            aws ec2 stop-instances --instance-ids $instance_id --region eu-west-3
+            aws ec2 wait instance-stopped --instance-ids $instance_id --region eu-west-3
+            aws ec2 start-instances --instance-ids $instance_id --region eu-west-3
+          fi
+        done
