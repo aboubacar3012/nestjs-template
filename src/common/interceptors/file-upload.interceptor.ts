@@ -9,7 +9,9 @@ export const FileUploadInterceptor = (fieldName = 'image') =>
       filename: async (req, file, callback) => {
         if (!file.mimetype.match(/\/(jpg|jpeg|png)$/)) {
           return callback(
-            new BadRequestException('Seuls les fichiers jpg et png sont acceptés'),
+            new BadRequestException(
+              'Seuls les fichiers jpg et png sont acceptés',
+            ),
             null,
           );
         }
