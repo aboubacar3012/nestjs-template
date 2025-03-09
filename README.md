@@ -12,7 +12,7 @@ Ce projet est un template NestJS utilisant Prisma comme ORM.
 
 ```bash
 # Installation des dépendances
-npm install
+yarn install
 ```
 
 ## Configuration
@@ -84,4 +84,3 @@ npx nest generate resource
 ## Licence
 
 [MIT](LICENSE)
-
